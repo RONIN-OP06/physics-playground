@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!-- The landing page for Physics Playground: what the game is, and its installers.
+     One file, no outside fonts or scripts, so it loads at once and asks nothing of the visitor.
+     It is kept in the game's own repository (site/) and published to the public downloads
+     repository by tools/publish-site.sh, where GitHub Pages serves it. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Physics Playground: a free physics sandbox for Mac and Windows</title>
+  <meta name="description" content="Build with blocks and machines, drive, dig and blow things up, alone or with up to six players. Free for Mac and Windows.">
+  <meta name="color-scheme" content="dark">
+  <!-- How the page looks when its link is shared. -->
+  <meta property="og:title" content="Physics Playground">
+  <meta property="og:description" content="A free physics sandbox for Mac and Windows. Build, drive, dig and blow things up, alone or with up to six players.">
+  <meta property="og:image" content="https://ronin-op06.github.io/physics-playground/images/sandbox.jpg">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <style>
+    /* The colours are the icon's: a dark blue tile, pale blue orbits, a warm orange nucleus. */
+    :root {
+      --bg: #0e1020;            /* the page */
+      --panel: #171a30;         /* cards and boxes on it */
+      --line: #2a2f52;          /* their edges */
+      --text: #e8ebf7;          /* body text */
+      --dim: #a4abc9;           /* quieter text */
+      --blue: #8fc2ff;          /* links, the orbits' colour */
+      --orange: #ffb347;        /* the download button, the nucleus's colour */
+      --orange-ink: #2a1800;    /* text on the button */
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    a { color: var(--blue); }
+    a:focus-visible, .button:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    img { max-width: 100%; height: auto; display: block; }
+    /* Everything sits in one centred column. */
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.02em; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); line-height: 1.2; margin: 0 0 18px; }
+    h3 { font-size: 1.1rem; margin: 0 0 6px; }
+    p { margin: 0 0 14px; }
+    .dim { color: var(--dim); }
+    .small { font-size: 0.9rem; }
+
+    /* The top of the page: the name, one sentence, the download button, a picture. */
+    .hero { padding: 64px 0 48px; text-align: center; }
+    .hero .logo { width: 104px; height: 104px; margin: 0 auto 22px; border-radius: 24px; }
+    .hero .tagline { font-size: clamp(1.05rem, 2.4vw, 1.3rem); color: var(--dim); max-width: 640px; margin: 0 auto 30px; }
+    .button {
+      display: inline-block; background: var(--orange); color: var(--orange-ink); font-weight: 700; font-size: 1.15rem;
+      padding: 15px 30px; border-radius: 12px; text-decoration: none; box-shadow: 0 6px 24px rgba(255, 179, 71, 0.25);
+    }
+    .button:hover { filter: brightness(1.08); }
+    .button small { display: block; font-weight: 500; font-size: 0.8rem; opacity: 0.8; margin-top: 2px; }
+    .button.quiet { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; font-size: 1rem; padding: 11px 20px; }
+    .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
+    .under { margin-top: 16px; }
+    .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+    .hero .shot { margin-top: 44px; }
+
+    /* What you can do: a picture and a few words each. */
+    .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
+    .feature { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .feature img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+    .feature div { padding: 18px 20px 20px; }
+    .feature p { margin: 0; color: var(--dim); }
+
+    /* The first-start steps: one box for each system, side by side. */
+    .two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
+    .box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
+    .box.mine { border-color: var(--orange); }  /* the visitor's own system is outlined */
+    .box ol, .box ul { margin: 0 0 14px; padding-left: 22px; }
+    .box li { margin-bottom: 8px; }
+    .note { background: rgba(143, 194, 255, 0.08); border-left: 3px solid var(--blue); padding: 12px 16px; border-radius: 6px; margin: 0 0 26px; }
+    code { background: #0a0c18; padding: 2px 6px; border-radius: 5px; font-size: 0.9em; overflow-wrap: anywhere; }
+    footer { padding: 36px 0 60px; border-top: 1px solid var(--line); color: var(--dim); font-size: 0.9rem; }
+
+    /* A narrow screen: one column. */
+    @media (max-width: 760px) {
+      .features, .two { grid-template-columns: 1fr; }
+      section { padding: 42px 0; }
+      .hero { padding-top: 44px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="logo" src="images/icon.png" width="104" height="104" alt="">
+    <h1>Physics Playground</h1>
+    <p class="tagline">A free physics sandbox. Build with blocks and machines, drive, dig and blow things up, alone or with up to six players.</p>
+
+    <div class="buttons">
+      <!-- The main button: for the visitor's own system (the script at the bottom of the page sets it). Until then, the Mac one. -->
+      <a class="button" id="main-download" href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg">
+        <span id="main-label">Download for Mac</span>
+        <small id="main-detail">macOS 11 or later, Apple Silicon and Intel</small>
+      </a>
+      <a class="button quiet" id="other-download" href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-Setup.exe">Download for Windows</a>
+    </div>
+    <p class="under dim small"><span id="version">Free.</span> No account, no ads. <a href="#first-start">How to start it the first time</a></p>
+    <p class="dim small" id="system-note" hidden></p>
+
+    <img class="shot" src="images/sandbox.jpg" width="1280" height="800" alt="The sandbox: a character standing by a campfire in a forest made of blocks.">
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap">
+    <h2>What you can do</h2>
+    <div class="features">
+      <div class="feature">
+        <img src="images/together.jpg" width="1280" height="800" loading="lazy" alt="Several players' characters in a burning forest, each with a name over their head.">
+        <div><h3>Play together</h3><p>Up to six players share one world on the same network. One opens their world, the others join from the menu.</p></div>
+      </div>
+      <div class="feature">
+        <img src="images/machines.jpg" width="1280" height="800" loading="lazy" alt="A step-by-step scene showing a motor turning a gear.">
+        <div><h3>Build machines</h3><p>Gears, shafts, engines, pneumatic cylinders and more, with short scenes that show how each part works.</p></div>
+      </div>
+      <div class="feature">
+        <img src="images/driving.jpg" width="1280" height="800" loading="lazy" alt="A red hatchback driving across green hills.">
+        <div><h3>Drive</h3><p>Cars and trucks with real suspension, an engine and a gearbox. Walk up to one and get in.</p></div>
+      </div>
+      <div class="feature">
+        <img src="images/black-hole.jpg" width="1280" height="800" loading="lazy" alt="A black hole bending the light of the grid behind it.">
+        <div><h3>See the physics</h3><p>Smaller scenes outside the sandbox go from atoms and light to orbits and a black hole, each with an explanation.</p></div>
+      </div>
+    </div>
+    <p class="under dim">In the sandbox you can also dig and shape the ground, place and break blocks, glue things together, set fires, and blow things up.</p>
+  </div>
+</section>
+
+<section id="first-start">
+  <div class="wrap">
+    <h2>Starting it the first time</h2>
+    <p class="note">The game is made by a hobbyist and is not registered with Apple or Microsoft, so both systems warn about it the first time you open it. You only have to do this once.</p>
+    <div class="two">
+      <div class="box" id="mac">
+        <h3>Mac</h3>
+        <ol>
+          <li>Open the downloaded file and drag <b>Physics Playground</b> onto the <b>Applications</b> folder beside it.</li>
+          <li>Open it from Applications. macOS says it could not verify the app. Click <b>Done</b>.</li>
+          <li>Open <b>System Settings &gt; Privacy &amp; Security</b>, scroll down, and click <b>Open Anyway</b> next to Physics Playground.</li>
+        </ol>
+        <p class="dim small">On macOS 14 or earlier: right-click the app, choose <b>Open</b>, then <b>Open</b>.</p>
+        <p class="dim small">Needs macOS 11 or later. Works on Apple Silicon and Intel Macs.</p>
+      </div>
+      <div class="box" id="windows">
+        <h3>Windows</h3>
+        <ol>
+          <li>Run the downloaded <b>PhysicsPlayground-Setup.exe</b>.</li>
+          <li>If Windows says "Windows protected your PC", click <b>More info</b>, then <b>Run anyway</b>.</li>
+          <li>Start the game from the Start menu or the desktop shortcut.</li>
+        </ol>
+        <p class="dim small">It installs for you only and needs no administrator password.</p>
+        <p class="dim small">Needs Windows 10 or 11, 64-bit, and a graphics driver that offers OpenGL 4.1: almost any PC from the last ten years with its graphics driver installed.</p>
+      </div>
+    </div>
+    <p class="under dim">In the game, choose <b>Choose scale</b>, then <b>Classical: rigid-body sandbox</b>. A short tutorial starts the first time. <b>F1</b> shows the controls, <b>Esc</b> opens the menu.</p>
+  </div>
+</section>
+
+<section id="together">
+  <div class="wrap">
+    <h2>Playing together</h2>
+    <div class="two">
+      <div class="box">
+        <h3>To host</h3>
+        <p>In the sandbox press <b>Esc</b>, then <b>Open to LAN</b>. Your world is now everyone's.</p>
+        <p class="dim small">Allow the game through the firewall (Windows) or allow it to use the local network (Mac) when asked, or nobody will be able to see you.</p>
+      </div>
+      <div class="box">
+        <h3>To join</h3>
+        <p>Press <b>Esc</b> and pick the host's game under "Games on this network", or type the host's address and click <b>Join</b>.</p>
+        <p class="dim small">Your own world is saved when you join and comes back when you leave. You keep your own inventory.</p>
+      </div>
+    </div>
+    <p class="under dim">Everyone needs the same version. Friends who are not on your network can join by address through a free virtual network such as Tailscale or ZeroTier, or if the host forwards UDP port 47815.</p>
+  </div>
+</section>
+
+<section id="more">
+  <div class="wrap">
+    <h2>Good to know</h2>
+    <div class="two">
+      <div class="box">
+        <h3>Your saves</h3>
+        <p>Settings, your world and your levels are kept in your own user folder, so a newer version picks them up and uninstalling leaves them alone.</p>
+        <ul class="small dim">
+          <li>Mac: <code>~/Library/Application Support/Physics Playground</code></li>
+          <li>Windows: <code>%APPDATA%\Physics Playground</code></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Other downloads</h3>
+        <ul>
+          <li><a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg">Mac installer</a> (.dmg)</li>
+          <li><a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-Setup.exe">Windows installer</a> (.exe)</li>
+          <li>Without an installer: <a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.zip">Mac zip</a>, <a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-windows.zip">Windows zip</a></li>
+          <li><a href="https://github.com/RONIN-OP06/physics-playground/releases">Earlier versions</a></li>
+        </ul>
+        <p class="dim small">To remove the game: on a Mac, drag it from Applications to the Bin; on Windows, uninstall it under Installed apps.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Physics Playground is free. Built with GLFW, Dear ImGui, ENet, cgltf, miniaudio, stb and JSON for Modern C++; the interface font is DejaVu Sans; the robot character is "RobotExpressive" by Tomás Laulhé with modifications by Don McCurdy (CC0). Their licences come with each download.</p>
+  </div>
+</footer>
+
+<script>
+  // Point the main button at the installer for the visitor's own system, and say which version it is.
+  (function () {
+    var base = "https://github.com/RONIN-OP06/physics-playground/releases/latest/download/";  // where the newest downloads always are
+    var ua = navigator.userAgent || "";  // what the browser says it is running on
+    var phone = /iPhone|iPad|iPod|Android/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);  // a phone or tablet (an iPad says it is a Mac)
+    var windows = /Windows/i.test(ua);  // a Windows PC
+    var mac = /Macintosh|Mac OS X/i.test(ua) && !phone;  // a Mac
+    var main = document.getElementById("main-download"), other = document.getElementById("other-download");  // the two buttons
+    var note = document.getElementById("system-note");  // a line under them for visitors on something else
+    function say(text) { note.textContent = text; note.hidden = false; }  // show that line
+    if (windows) {  // a Windows visitor: the big button is the Windows installer, the small one the Mac's
+      main.href = base + "PhysicsPlayground-Setup.exe";  // the installer
+      document.getElementById("main-label").textContent = "Download for Windows";  // what it says
+      document.getElementById("main-detail").textContent = "Windows 10 or 11, 64-bit";  // and what it needs
+      other.href = base + "PhysicsPlayground-mac.dmg";  // the other system's
+      other.textContent = "Download for Mac";  // what that says
+      document.getElementById("windows").classList.add("mine");  // outline the Windows steps further down
+    } else if (mac) {  // a Mac visitor: the page is already set for them
+      document.getElementById("mac").classList.add("mine");  // outline the Mac steps
+    } else if (phone) {  // a phone or tablet
+      say("The game runs on Mac and Windows computers. Open this page on one to download it.");
+    } else {  // something else (Linux, a Chromebook)
+      say("The game is for Mac and Windows. There is no Linux version yet.");
+    }
+    // The newest version's number and the size of the visitor's download, asked of GitHub. If that
+    // fails (no network, too many requests) the page simply says "Free." as it did.
+    if (!window.fetch) return;  // (a very old browser)
+    fetch("https://api.github.com/repos/RONIN-OP06/physics-playground/releases/latest")
+      .then(function (r) { return r.ok ? r.json() : null; })  // the release, as data
+      .then(function (release) {
+        if (!release || !release.tag_name) return;  // nothing usable
+        var want = main.href.split("/").pop(), size = "";  // the file the main button downloads, and its size as text
+        (release.assets || []).forEach(function (a) {  // look for it among the release's files
+          if (a.name === want) size = ", " + Math.round(a.size / 1048576) + " MB";  // found: its size in megabytes
+        });
+        document.getElementById("version").textContent = "Version " + release.tag_name.replace(/^v/, "") + size + ". Free.";  // onto the page
+      })
+      .catch(function () {});  // (stay as it was)
+  })();
+</script>
+</body>
+</html>

@@ -4,16 +4,19 @@ A free physics sandbox for Mac and Windows. Build with blocks and machines, driv
 alone or with up to six players on one network. It also includes a set of smaller physics scenes, from
 atoms to black holes.
 
-![Six players in one world](images/six-players.jpg)
+**Download it from the game's page: https://ronin-op06.github.io/physics-playground/**
+
+![The sandbox](images/sandbox.jpg)
 
 ## Download
 
 | | |
 |---|---|
-| **Mac** (macOS 11 or later, Apple Silicon and Intel) | [PhysicsPlayground-mac.zip](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.zip) |
-| **Windows** (10 or 11, 64-bit) | [PhysicsPlayground-windows.zip](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-windows.zip) |
+| **Mac** (macOS 11 or later, Apple Silicon and Intel) | [PhysicsPlayground-mac.dmg](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg) |
+| **Windows** (10 or 11, 64-bit) | [PhysicsPlayground-Setup.exe](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-Setup.exe) |
 
-It is free. There is nothing to install and no account to make.
+It is free, with no account to make. The same game without an installer is on the
+[releases page](https://github.com/RONIN-OP06/physics-playground/releases/latest) as zips.
 
 ## Starting it the first time
 
@@ -22,8 +25,8 @@ the first time you open it. This only has to be done once.
 
 **Mac**
 
-1. Unzip, and drag **Physics Playground** into your Applications folder.
-2. Double-click it. macOS says it could not verify the app. Click **Done**.
+1. Open the downloaded file and drag **Physics Playground** onto the **Applications** folder beside it.
+2. Open it from Applications. macOS says it could not verify the app. Click **Done**.
 3. Open **System Settings > Privacy & Security**, scroll down, and click **Open Anyway** next to
    Physics Playground.
 
@@ -31,19 +34,17 @@ On macOS 14 or earlier: right-click the app, choose **Open**, then **Open**.
 
 **Windows**
 
-1. Unzip the whole folder (the program needs the folders beside it).
-2. Double-click **Physics Playground.exe**. If Windows says "Windows protected your PC", click
-   **More info**, then **Run anyway**.
+1. Run the downloaded **PhysicsPlayground-Setup.exe**.
+2. If Windows says "Windows protected your PC", click **More info**, then **Run anyway**.
+3. Start the game from the Start menu or the desktop shortcut.
 
-Windows needs a graphics driver that offers OpenGL 4.1: almost any PC from the last ten years, with its
-graphics driver installed.
+It installs for you only and needs no administrator password. Windows needs a graphics driver that offers
+OpenGL 4.1: almost any PC from the last ten years, with its graphics driver installed.
 
 ## Playing
 
 From the menu choose **Choose scale**, then **Classical: rigid-body sandbox**. A short tutorial starts the
 first time. **F1** shows the controls, **Esc** opens the menu.
-
-![The sandbox](images/sandbox.jpg)
 
 ## Playing together
 
@@ -57,13 +58,14 @@ Everyone needs the same version. Allow the game through the firewall (Windows) o
 network (Mac) when asked, or others will not be able to see you.
 
 Friends who are not on your network can join by address through a free virtual network such as Tailscale or
-ZeroTier, or if the host forwards UDP port 47815. The file PLAYING-TOGETHER.txt in the download has the
-details.
+ZeroTier, or if the host forwards UDP port 47815.
+
+![Six players in one world](images/together.jpg)
 
 ## Your saves
 
 Settings, your world and your levels are kept in your own user folder, so a newer version of the game picks
-them up:
+them up and uninstalling leaves them alone:
 
 - Mac: `~/Library/Application Support/Physics Playground`
 - Windows: `%APPDATA%\Physics Playground`
@@ -72,6 +74,4 @@ them up:
 
 Built with GLFW, Dear ImGui, ENet, cgltf, miniaudio, stb and JSON for Modern C++. The interface font is
 DejaVu Sans. The robot character is "RobotExpressive" by Tomás Laulhé, with modifications by Don McCurdy
-(CC0). Their licences are in THIRD-PARTY-LICENSES.txt in each download.
-
-![Main menu](images/menu.jpg)
+(CC0). Their licences come with each download.
