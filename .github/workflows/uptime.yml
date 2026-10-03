@@ -72,7 +72,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           if [ -n "$problems" ]; then printf 'Problems found:\n%s' "$problems"; else echo "All well: the page, its pictures and every download answer."; fi
 
-      - name: Mend: ask GitHub to build and publish the site again
+      - name: "Mend: ask GitHub to build and publish the site again"
         if: steps.check.outputs.page_up == 'false'
         id: mend
         shell: bash
@@ -94,7 +94,7 @@ jobs:
           if [ "$code" = "200" ]; then echo "mended=true" >> "$GITHUB_OUTPUT"; echo "The page answers again (HTTP 200)."
           else echo "mended=false" >> "$GITHUB_OUTPUT"; echo "Still down after the rebuild (HTTP $code)."; fi
 
-      - name: Alarm: open, update or close the issue
+      - name: "Alarm: open, update or close the issue"
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -123,7 +123,7 @@ jobs:
             echo "Closed issue #$existing."
           fi
 
-      - name: Keep-alive: a small commit when the last one is getting old
+      - name: "Keep-alive: a small commit when the last one is getting old"
         if: always()
         shell: bash
         run: |
