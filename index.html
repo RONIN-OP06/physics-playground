@@ -7,12 +7,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Physics Playground: a free physics sandbox for Mac and Windows</title>
-  <meta name="description" content="Build with blocks and machines, drive, dig and blow things up, alone or with up to six players. Free for Mac and Windows.">
+  <title>Physics Playground: a free physics sandbox for Mac, Windows and Android</title>
+  <meta name="description" content="Build with blocks and machines, drive, dig and blow things up, alone or with up to six players. Free for Mac, Windows and Android.">
   <meta name="color-scheme" content="dark">
   <!-- How the page looks when its link is shared. -->
   <meta property="og:title" content="Physics Playground">
-  <meta property="og:description" content="A free physics sandbox for Mac and Windows. Build, drive, dig and blow things up, alone or with up to six players.">
+  <meta property="og:description" content="A free physics sandbox for Mac, Windows and Android. Build, drive, dig and blow things up, alone or with up to six players.">
   <meta property="og:image" content="https://ronin-op06.github.io/physics-playground/images/sandbox.jpg">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" href="images/favicon.png">
@@ -104,6 +104,7 @@
         <small id="main-detail">macOS 11 or later, Apple Silicon and Intel</small>
       </a>
       <a class="button quiet" id="other-download" href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-Setup.exe">Download for Windows</a>
+      <a class="button quiet" id="android-download" href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-android.apk">Download for Android</a>
     </div>
     <p class="under dim small"><span id="version">Free.</span> No account, no ads. <a href="#first-start">How to start it the first time</a></p>
     <p class="dim small" id="system-note" hidden></p>
@@ -123,7 +124,7 @@
       </div>
       <div class="feature">
         <img src="images/machines.jpg" width="1280" height="800" loading="lazy" alt="A step-by-step scene showing a motor turning a gear.">
-        <div><h3>Build machines</h3><p>Gears, shafts, engines, pneumatic cylinders and more, with short scenes that show how each part works.</p></div>
+        <div><h3>Build machines</h3><p>Gears, shafts, engines, pneumatic cylinders and more, with short scenes that show how each part works. Free gears go anywhere: hinge them to anything, mesh them by placing them, key them to axles, add motors, and hear teeth snap when a train is driven too hard.</p></div>
       </div>
       <div class="feature">
         <img src="images/driving.jpg" width="1280" height="800" loading="lazy" alt="A red hatchback driving across green hills.">
@@ -141,7 +142,7 @@
 <section id="first-start">
   <div class="wrap">
     <h2>Starting it the first time</h2>
-    <p class="note">The game is made by a hobbyist and is not registered with Apple or Microsoft, so both systems warn about it the first time you open it. You only have to do this once.</p>
+    <p class="note">The game is made by a hobbyist and is not registered with Apple, Microsoft or Google, so every system warns about it the first time you open it. You only have to do this once.</p>
     <div class="two">
       <div class="box" id="mac">
         <h3>Mac</h3>
@@ -162,6 +163,20 @@
         </ol>
         <p class="dim small">It installs for you only and needs no administrator password.</p>
         <p class="dim small">Needs Windows 10 or 11, 64-bit, and a graphics driver that offers OpenGL 4.1: almost any PC from the last ten years with its graphics driver installed.</p>
+      </div>
+      <div class="box" id="android">
+        <h3>Android</h3>
+        <ol>
+          <li>Open the downloaded <b>PhysicsPlayground-android.apk</b> (from the notification, or the Files app).</li>
+          <li>Android asks to allow installing from this source: allow it, then tap <b>Install</b>. If Play Protect says it does not know the app, choose <b>Install anyway</b>.</li>
+          <li>Open it. Hold the phone sideways: one finger drags to look, a second finger drags to move, tap to use, hold a finger to place.</li>
+        </ol>
+        <p class="dim small">Needs Android 8 or later with OpenGL ES 3.0 (any phone or tablet from the last eight years). It plays with Macs, PCs and other phones on the same Wi-Fi.</p>
+      </div>
+      <div class="box" id="ios">
+        <h3>iPhone and iPad</h3>
+        <p>Not on the App Store. If you have a Mac with Xcode, the <a href="https://github.com/RONIN-OP06/physics-playground">source</a> builds for iPhone and iPad (see <code>ios/README.md</code>) and runs on your own devices.</p>
+        <p class="dim small">Joining a game: the iPhone finds hosts by their address (shown on the host's Host tab).</p>
       </div>
     </div>
     <p class="under dim">In the game, choose <b>Choose scale</b>, then <b>Classical: rigid-body sandbox</b>. A short tutorial starts the first time. <b>F1</b> shows the controls, <b>Esc</b> opens the menu.</p>
@@ -205,10 +220,11 @@
         <ul>
           <li><a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg">Mac installer</a> (.dmg)</li>
           <li><a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-Setup.exe">Windows installer</a> (.exe)</li>
+          <li><a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-android.apk">Android app</a> (.apk)</li>
           <li>Without an installer: <a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.zip">Mac zip</a>, <a href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-windows.zip">Windows zip</a></li>
           <li><a href="https://github.com/RONIN-OP06/physics-playground/releases">Earlier versions</a></li>
         </ul>
-        <p class="dim small">To remove the game: on a Mac, drag it from Applications to the Bin; on Windows, uninstall it under Installed apps.</p>
+        <p class="dim small">To remove the game: on a Mac, drag it from Applications to the Bin; on Windows, uninstall it under Installed apps; on Android, hold its icon and choose Uninstall.</p>
       </div>
     </div>
   </div>
@@ -226,10 +242,11 @@
   (function () {
     var base = "https://github.com/RONIN-OP06/physics-playground/releases/latest/download/";  // where the newest downloads always are
     var ua = navigator.userAgent || "";  // what the browser says it is running on
+    var android = /Android/i.test(ua);  // an Android phone or tablet
     var phone = /iPhone|iPad|iPod|Android/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);  // a phone or tablet (an iPad says it is a Mac)
-    var windows = /Windows/i.test(ua);  // a Windows PC
+    var windows = /Windows/i.test(ua) && !android;  // a Windows PC
     var mac = /Macintosh|Mac OS X/i.test(ua) && !phone;  // a Mac
-    var main = document.getElementById("main-download"), other = document.getElementById("other-download");  // the two buttons
+    var main = document.getElementById("main-download"), other = document.getElementById("other-download"), droid = document.getElementById("android-download");  // the three buttons
     var note = document.getElementById("system-note");  // a line under them for visitors on something else
     function say(text) { note.textContent = text; note.hidden = false; }  // show that line
     if (windows) {  // a Windows visitor: the big button is the Windows installer, the small one the Mac's
@@ -241,10 +258,18 @@
       document.getElementById("windows").classList.add("mine");  // outline the Windows steps further down
     } else if (mac) {  // a Mac visitor: the page is already set for them
       document.getElementById("mac").classList.add("mine");  // outline the Mac steps
-    } else if (phone) {  // a phone or tablet
-      say("The game runs on Mac and Windows computers. Open this page on one to download it.");
+    } else if (android) {  // an Android visitor: the big button is the app, the small ones the computers'
+      main.href = base + "PhysicsPlayground-android.apk";  // the app
+      document.getElementById("main-label").textContent = "Download for Android";  // what it says
+      document.getElementById("main-detail").textContent = "Android 8 or later, OpenGL ES 3.0";  // and what it needs
+      droid.href = base + "PhysicsPlayground-mac.dmg";  // the third button becomes the Mac's
+      droid.textContent = "Download for Mac";  // what that says
+      document.getElementById("android").classList.add("mine");  // outline the Android steps further down
+    } else if (phone) {  // an iPhone or iPad
+      say("There is no App Store version. The game runs on Mac, Windows and Android; with Xcode it builds for iPhone and iPad from the source.");
+      document.getElementById("ios").classList.add("mine");  // outline the iPhone notes further down
     } else {  // something else (Linux, a Chromebook)
-      say("The game is for Mac and Windows. There is no Linux version yet.");
+      say("The game is for Mac, Windows and Android. There is no Linux version yet.");
     }
     // The newest version's number and the size of the visitor's download, asked of GitHub. If that
     // fails (no network, too many requests) the page simply says "Free." as it did.
