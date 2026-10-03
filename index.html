@@ -62,6 +62,7 @@
     .under { margin-top: 16px; }
     .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
     .hero .shot { margin-top: 44px; }
+    .shot.radar { max-width: 460px; margin: 26px auto 0; }  /* the radar picture: smaller, centred */
 
     /* What you can do: a picture and a few words each. */
     .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
@@ -118,7 +119,7 @@
     <div class="features">
       <div class="feature">
         <img src="images/together.jpg" width="1280" height="800" loading="lazy" alt="Several players' characters in a burning forest, each with a name over their head.">
-        <div><h3>Play together</h3><p>Up to six players share one world on the same network. One opens their world, the others join from the menu.</p></div>
+        <div><h3>Play together</h3><p>Up to six players share one world on the same network. One opens their world; the others see it on the radar in the Multiplayer menu and click to join.</p></div>
       </div>
       <div class="feature">
         <img src="images/machines.jpg" width="1280" height="800" loading="lazy" alt="A step-by-step scene showing a motor turning a gear.">
@@ -133,7 +134,7 @@
         <div><h3>See the physics</h3><p>Smaller scenes outside the sandbox go from atoms and light to orbits and a black hole, each with an explanation.</p></div>
       </div>
     </div>
-    <p class="under dim">In the sandbox you can also dig and shape the ground, place and break blocks, glue things together, set fires, and blow things up.</p>
+    <p class="under dim">In the sandbox you can also dig and shape the ground, place and break blocks, glue things together, set fires, blow things up, and drop your own 3D models (.glb files) onto the window: pick one up and it becomes an item you can hold, swing, put down or drop.</p>
   </div>
 </section>
 
@@ -173,15 +174,16 @@
     <div class="two">
       <div class="box">
         <h3>To host</h3>
-        <p>In the sandbox press <b>Esc</b>, then <b>Open to LAN</b>. Your world is now everyone's.</p>
+        <p>Choose <b>Multiplayer</b> in the main menu (or press <b>Esc</b> in the sandbox), then <b>Open to LAN</b> on the Host tab. Your world is now everyone's.</p>
         <p class="dim small">Allow the game through the firewall (Windows) or allow it to use the local network (Mac) when asked, or nobody will be able to see you.</p>
       </div>
       <div class="box">
         <h3>To join</h3>
-        <p>Press <b>Esc</b> and pick the host's game under "Games on this network", or type the host's address and click <b>Join</b>.</p>
+        <p>Choose <b>Multiplayer</b>: the radar shows every world open on your network as it sweeps past it. Click the host's blip. For a host on another network, type their address on the "Join by address" tab.</p>
         <p class="dim small">Your own world is saved when you join and comes back when you leave. You keep your own inventory.</p>
       </div>
     </div>
+    <img class="shot radar" src="images/radar.jpg" width="1280" height="1080" loading="lazy" alt="The Multiplayer window: a radar scope with a sweep, and a blip labelled with a host's name and player count.">
     <p class="under dim">Everyone needs the same version. Friends who are not on your network can join by address through a free virtual network such as Tailscale or ZeroTier, or if the host forwards UDP port 47815.</p>
   </div>
 </section>

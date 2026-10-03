@@ -50,9 +50,10 @@ first time. **F1** shows the controls, **Esc** opens the menu.
 
 Up to six players can share one world.
 
-- **Host:** in the sandbox press **Esc**, then **Open to LAN**.
-- **Join:** press **Esc**, then pick the host's game under "Games on this network", or type the host's
-  address and click **Join**.
+- **Host:** choose **Multiplayer** in the main menu (or press **Esc** in the sandbox), then **Open to LAN**
+  on the Host tab.
+- **Join:** choose **Multiplayer**: the radar shows every world open on your network; click the host's
+  blip. For a host on another network, type their address on the "Join by address" tab.
 
 Everyone needs the same version. Allow the game through the firewall (Windows) or allow it to use the local
 network (Mac) when asked, or others will not be able to see you.

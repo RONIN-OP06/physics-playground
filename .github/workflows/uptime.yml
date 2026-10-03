@@ -1,0 +1,141 @@
+# Keeps the download page up without anyone's computer being involved: GitHub's own machines check
+# it every few hours, mend what they can, and raise the alarm for the rest.
+#
+# What it does, in order:
+#   check      asks for the page, its 404 page, a picture, and every installer download; if the page
+#              fails it tries again a minute later, twice (a hiccup isn't an outage).
+#   mend       if the page is still down: asks GitHub to build and publish the site again (the same
+#              thing the Pages settings page does), waits for the build, and asks for the page once more.
+#   alarm      if it is still down, or a download link is broken: opens an issue in this repository
+#              (the owner gets an email), or adds to the open one; when all is well again, closes it.
+#   keep-alive GitHub switches off scheduled workflows in a repository that has had no commits for
+#              60 days, which would switch this check off too. So once a month, when the last commit
+#              is getting old, it commits a one-line status file. (The page itself is not touched.)
+#
+# This file lives in the game's own repository as site/.github/workflows/uptime.yml and is copied
+# here by tools/publish-site.sh with the rest of the page.
+name: uptime
+on:
+  schedule:
+    - cron: '23 */6 * * *'  # every six hours (at 23 minutes past, not on the hour: GitHub's queues are quietest then)
+  workflow_dispatch:  # and by hand, from the Actions page
+
+permissions:
+  contents: write  # the keep-alive commit
+  pages: write  # asking for the site to be built again
+  issues: write  # the alarm
+
+concurrency:
+  group: uptime  # never two of these at once
+  cancel-in-progress: false
+
+env:
+  PAGE: https://ronin-op06.github.io/physics-playground/
+  DOWNLOADS: https://github.com/RONIN-OP06/physics-playground/releases/latest/download/
+  ASSETS: PhysicsPlayground-mac.dmg PhysicsPlayground-Setup.exe PhysicsPlayground-mac.zip PhysicsPlayground-windows.zip
+  ISSUE_TITLE: "The download page or a download is not reachable"
+
+jobs:
+  uptime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the page and the downloads
+        id: check
+        shell: bash
+        run: |
+          set -u
+          problems=""  # what is wrong, one line each
+          page_up=false  # is the page itself answering?
+          for try in 1 2 3; do  # the page: three tries a minute apart, so a hiccup isn't an outage
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$PAGE" || echo 000)
+            if [ "$code" = "200" ] && curl -s --max-time 30 "$PAGE" | grep -q "Download for Mac"; then page_up=true; break; fi
+            echo "page: HTTP $code on try $try"
+            [ $try -lt 3 ] && sleep 60
+          done
+          $page_up || problems="$problems- The page $PAGE did not answer with its contents (last answer: HTTP $code)."$'\n'
+          for path in images/sandbox.jpg images/icon.png; do  # a picture the page shows
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$PAGE$path" || echo 000)
+            [ "$code" = "200" ] || problems="$problems- $PAGE$path answered HTTP $code."$'\n'
+          done
+          for asset in $ASSETS; do  # every installer and zip: follow the redirect to the file, read only its headers
+            code=$(curl -s -o /dev/null -w '%{http_code}' -I -L --max-time 60 "$DOWNLOADS$asset" || echo 000)
+            [ "$code" = "200" ] || problems="$problems- The download $DOWNLOADS$asset answered HTTP $code."$'\n'
+          done
+          echo "page_up=$page_up" >> "$GITHUB_OUTPUT"
+          {
+            echo "problems<<EOF"
+            printf '%s' "$problems"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          if [ -n "$problems" ]; then printf 'Problems found:\n%s' "$problems"; else echo "All well: the page, its pictures and every download answer."; fi
+
+      - name: Mend: ask GitHub to build and publish the site again
+        if: steps.check.outputs.page_up == 'false'
+        id: mend
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          echo "The page is down: requesting a new Pages build."
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" --jq '.status' || echo "(the build request itself failed)"
+          for wait in $(seq 1 20); do  # up to ten minutes for the build
+            sleep 30
+            status=$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" --jq '.status' 2>/dev/null || echo unknown)
+            echo "build: $status"
+            [ "$status" = "built" ] && break
+            [ "$status" = "errored" ] && { gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" --jq '.error.message'; break; }
+          done
+          sleep 30  # a moment for the new build to be served
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$PAGE" || echo 000)
+          if [ "$code" = "200" ]; then echo "mended=true" >> "$GITHUB_OUTPUT"; echo "The page answers again (HTTP 200)."
+          else echo "mended=false" >> "$GITHUB_OUTPUT"; echo "Still down after the rebuild (HTTP $code)."; fi
+
+      - name: Alarm: open, update or close the issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROBLEMS: ${{ steps.check.outputs.problems }}
+          PAGE_UP: ${{ steps.check.outputs.page_up }}
+          MENDED: ${{ steps.mend.outputs.mended }}
+        run: |
+          set -u
+          # Is there an open alarm already?
+          existing=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[0].number // empty')
+          still_wrong="$PROBLEMS"
+          if [ "$PAGE_UP" = "false" ] && [ "$MENDED" = "true" ]; then  # the page was down but came back after the rebuild: not an alarm, but worth a note
+            still_wrong=$(printf '%s' "$still_wrong" | grep -v 'did not answer with its contents' || true)
+            echo "The page was down and has been rebuilt; it answers again."
+          fi
+          run_url="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          if [ -n "$still_wrong" ]; then  # something is wrong
+            body=$(printf 'The uptime check found:\n\n%s\nChecked at %s by %s.\n\nWhat to look at: the Pages settings of this repository (Settings > Pages), the latest release and its files, and GitHub'"'"'s status page https://www.githubstatus.com/. This issue is closed by the check itself once everything answers again.' "$still_wrong" "$(date -u +'%Y-%m-%d %H:%M UTC')" "$run_url")
+            if [ -n "$existing" ]; then gh issue comment "$existing" -R "$GITHUB_REPOSITORY" --body "$body"; echo "Added to issue #$existing."
+            else gh issue create -R "$GITHUB_REPOSITORY" --title "$ISSUE_TITLE" --body "$body" --label "uptime" 2>/dev/null || gh issue create -R "$GITHUB_REPOSITORY" --title "$ISSUE_TITLE" --body "$body"; echo "Opened an issue."; fi
+            exit 1  # the run shows as failed too (GitHub emails the owner about failed scheduled runs)
+          fi
+          if [ -n "$existing" ]; then  # all well again: close the alarm
+            gh issue comment "$existing" -R "$GITHUB_REPOSITORY" --body "Everything answers again (checked at $(date -u +'%Y-%m-%d %H:%M UTC') by $run_url). Closing."
+            gh issue close "$existing" -R "$GITHUB_REPOSITORY"
+            echo "Closed issue #$existing."
+          fi
+
+      - name: Keep-alive: a small commit when the last one is getting old
+        if: always()
+        shell: bash
+        run: |
+          set -u
+          last=$(git log -1 --format=%ct)  # when the last commit was made
+          age_days=$(( ( $(date +%s) - last ) / 86400 ))
+          echo "The last commit is $age_days days old."
+          if [ "$age_days" -lt 30 ]; then echo "Nothing to do: GitHub only switches scheduled workflows off after 60 days without commits."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          printf 'Last uptime check that also kept this repository active: %s\n' "$(date -u +'%Y-%m-%d %H:%M UTC')" > status.txt
+          git add status.txt
+          git commit -m "Keep-alive: the uptime check ran" -m "A commit now and then keeps GitHub from switching off the scheduled uptime check (it does so after 60 days without commits)."
+          git push
+          echo "Committed."
