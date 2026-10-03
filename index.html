@@ -48,7 +48,16 @@
     .small { font-size: 0.9rem; }
 
     /* The top of the page: the name, one sentence, the download button, a picture. */
-    .hero { padding: 64px 0 48px; text-align: center; }
+    /* The galaxy behind the top of the page (the Milky Way, from NASA's Deep Star Maps 2020: images/galaxy.jpg), under a
+       veil that deepens into the page's own colour, so the words above it stay readable and the page below is unchanged. */
+    .hero {
+      padding: 64px 0 48px; text-align: center;
+      background:
+        linear-gradient(180deg, rgba(11, 13, 28, 0.38) 0%, rgba(11, 13, 28, 0.62) 55%, var(--bg) 100%),
+        #0b0d1c url("images/galaxy.jpg") center 42% / cover no-repeat;
+    }
+    .hero h1, .hero .tagline, .hero .under { text-shadow: 0 2px 14px rgba(4, 5, 14, 0.85); }  /* a soft shadow keeps the words clear of the bright band */
+    .hero .tagline { color: #d8def2; }  /* (a little brighter than elsewhere: it sits on a picture) */
     .hero .logo { width: 104px; height: 104px; margin: 0 auto 22px; border-radius: 24px; }
     .hero .tagline { font-size: clamp(1.05rem, 2.4vw, 1.3rem); color: var(--dim); max-width: 640px; margin: 0 auto 30px; }
     .button {
@@ -57,7 +66,7 @@
     }
     .button:hover { filter: brightness(1.08); }
     .button small { display: block; font-weight: 500; font-size: 0.8rem; opacity: 0.8; margin-top: 2px; }
-    .button.quiet { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; font-size: 1rem; padding: 11px 20px; }
+    .button.quiet { background: rgba(11, 13, 28, 0.55); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.28); box-shadow: none; font-size: 1rem; padding: 11px 20px; backdrop-filter: blur(6px); }
     .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
     .under { margin-top: 16px; }
     .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
@@ -169,7 +178,7 @@
         <ol>
           <li>Open the downloaded <b>PhysicsPlayground-android.apk</b> (from the notification, or the Files app).</li>
           <li>Android asks to allow installing from this source: allow it, then tap <b>Install</b>. If Play Protect says it does not know the app, choose <b>Install anyway</b>.</li>
-          <li>Open it. Hold the phone sideways: the left thumb walks on the stick (push far to run), the right thumb drags to look and taps to use; the buttons are Fire, Jump, Use, Build, Place, Items and Menu.</li>
+          <li>Open it and tap <b>Play</b>. Hold the phone sideways: the left thumb walks on the arrows (double-tap forward to run; Options has a joystick instead), the right thumb drags to look and taps to use. Buttons: Fire, Jump, Use, Build, Place, Items, Menu; <b>More</b> holds everything else, <b>Hide</b> clears the panels.</li>
         </ol>
         <p class="dim small">Needs Android 8 or later with OpenGL ES 3.0 (any phone or tablet from the last eight years). It starts in the Low performance mode; Options &gt; Performance raises it on a fast phone. It plays with Macs, PCs and other phones on the same Wi-Fi.</p>
       </div>
@@ -233,7 +242,7 @@
 
 <footer>
   <div class="wrap">
-    <p>Physics Playground is free. Built with GLFW, Dear ImGui, ENet, cgltf, miniaudio, stb and JSON for Modern C++; the interface font is DejaVu Sans; the robot character is "RobotExpressive" by Tomás Laulhé with modifications by Don McCurdy (CC0). Their licences come with each download.</p>
+    <p>Physics Playground is free. Built with GLFW, Dear ImGui, ENet, cgltf, miniaudio, stb and JSON for Modern C++; the interface font is DejaVu Sans; the robot character is "RobotExpressive" by Tomás Laulhé with modifications by Don McCurdy (CC0). Their licences come with each download. The galaxy behind this page and behind the game's menu is from Deep Star Maps 2020 (NASA/Goddard Space Flight Center Scientific Visualization Studio; Gaia DR2: ESA/Gaia/DPAC).</p>
   </div>
 </footer>
 
