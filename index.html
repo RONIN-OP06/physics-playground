@@ -71,7 +71,7 @@
     .under { margin-top: 16px; }
     .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
     .hero .shot { margin-top: 44px; }
-    .shot.radar { max-width: 460px; margin: 26px auto 0; }  /* the radar picture: smaller, centred */
+    .shot.radar { max-width: min(460px, 100%); margin: 26px auto 0; }  /* the radar picture: smaller, centred, and never wider than the screen (460px alone pushed a phone's page sideways) */
 
     /* What you can do: a picture and a few words each. */
     .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
