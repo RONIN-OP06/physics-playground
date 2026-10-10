@@ -1,8 +1,8 @@
 # Physics Playground
 
-A free physics sandbox for Mac and Windows. Build with blocks and machines, drive, dig, and blow things up,
-alone or with up to six players on one network. It also includes a set of smaller physics scenes, from
-atoms to black holes.
+A free physics sandbox for Mac, Windows and Android. Build machines that drive, fly, float and walk, dig and
+blow things up, alone or with up to six players on one network. It also includes a set of smaller physics
+scenes, from atoms to black holes.
 
 **Download it from the game's page: https://ronin-op06.github.io/physics-playground/**
 
@@ -14,14 +14,15 @@ atoms to black holes.
 |---|---|
 | **Mac** (macOS 11 or later, Apple Silicon and Intel) | [PhysicsPlayground-mac.dmg](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg) |
 | **Windows** (10 or 11, 64-bit) | [PhysicsPlayground-Setup.exe](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-Setup.exe) |
+| **Android** (8 or later) | [PhysicsPlayground-android.apk](https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-android.apk) |
 
 It is free, with no account to make. The same game without an installer is on the
 [releases page](https://github.com/RONIN-OP06/physics-playground/releases/latest) as zips.
 
 ## Starting it the first time
 
-The game is made by a hobbyist and is not registered with Apple or Microsoft, so both systems warn about it
-the first time you open it. This only has to be done once.
+The game is made by a hobbyist and is not registered with Apple, Microsoft or Google, so every system warns
+about it the first time you open it. This only has to be done once.
 
 **Mac**
 
@@ -41,10 +42,24 @@ On macOS 14 or earlier: right-click the app, choose **Open**, then **Open**.
 It installs for you only and needs no administrator password. Windows needs a graphics driver that offers
 OpenGL 4.1: almost any PC from the last ten years, with its graphics driver installed.
 
+**Android**
+
+1. Open the downloaded **PhysicsPlayground-android.apk** (from the notification, or the Files app).
+2. Android asks to allow installing from this source: allow it, then tap **Install**. If Play Protect says it
+   does not know the app, choose **Install anyway**.
+3. Open it and tap **Play**. Hold the phone sideways.
+
+Needs Android 8 or later with OpenGL ES 3.0.
+
 ## Playing
 
-From the menu choose **Choose scale**, then **Classical: rigid-body sandbox**. A short tutorial starts the
-first time. **F1** shows the controls, **Esc** opens the menu.
+From the menu choose **Play**. A short tutorial starts the first time, and there are more for gears,
+pneumatics, building machines, mechanisms, boats and planes, and siege. **F1** shows the controls, **Esc**
+opens the menu. The smaller physics scenes are under **All scenes: choose a scale**.
+
+Machines are built from a core block and 36 parts (wheels, wings, jet engines, hulls, pistons, gears, a steam
+engine and more). Eight come ready-made in the inventory's **Vehicles** tab: a rally buggy, a 6x6 truck, a jet
+plane, a prop plane, a light tank, a heavy tank, and two walkers, the strider and the hexapod.
 
 ## Playing together
 

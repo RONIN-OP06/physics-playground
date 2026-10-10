@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <!-- The landing page for Physics Playground: what the game is, and its installers.
      One file, no outside fonts or scripts, so it loads at once and asks nothing of the visitor.
+     Its title is built from blocks that can be pushed about and blasted (the script at the bottom
+     of the page); without a canvas, or for a visitor who asked for less motion, it is plain text.
      It is kept in the game's own repository (site/) and published to the public downloads
      repository by tools/publish-site.sh, where GitHub Pages serves it. -->
 <html lang="en">
@@ -8,14 +10,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Physics Playground: a free physics sandbox for Mac, Windows and Android</title>
-  <meta name="description" content="Build with blocks, gears and machines, drive, fly a jetpack, dig and blow things up, alone or with up to six players. Free for Mac, Windows and Android.">
+  <meta name="description" content="Build machines that drive, fly, float and walk, dig and blow things up, alone or with up to six players. Free for Mac, Windows and Android.">
   <meta name="color-scheme" content="dark">
   <!-- How the page looks when its link is shared. -->
   <meta property="og:title" content="Physics Playground">
-  <meta property="og:description" content="A free physics sandbox for Mac, Windows and Android. Build, drive, fly, dig and blow things up, alone or with up to six players.">
+  <meta property="og:description" content="A free physics sandbox for Mac, Windows and Android. Build machines that drive, fly, float and walk, dig and blow things up, alone or with up to six players.">
   <meta property="og:image" content="https://ronin-op06.github.io/physics-playground/images/sandbox.jpg">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" href="images/favicon.png">
+  <script>
+    // Decided before anything is drawn, so nothing jumps afterwards: is the title built from blocks?
+    // (It needs a canvas, and stays plain text for a visitor whose system asks for less motion.)
+    if (window.matchMedia && !matchMedia("(prefers-reduced-motion: reduce)").matches && document.createElement("canvas").getContext) document.documentElement.className = "blocks";
+  </script>
   <style>
     /* The colours are the icon's: a dark blue tile, pale blue orbits, a warm orange nucleus. */
     :root {
@@ -29,7 +36,7 @@
       --orange-ink: #2a1800;    /* text on the button */
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }  /* (a link to a section stops below the bar at the top) */
     body {
       margin: 0; background: var(--bg); color: var(--text);
       font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -41,24 +48,43 @@
     .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
     section { padding: 56px 0; border-top: 1px solid var(--line); }
     h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.02em; }
-    h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); line-height: 1.2; margin: 0 0 18px; }
+    h2 { font-size: clamp(1.8rem, 4.4vw, 2.7rem); font-weight: 800; line-height: 1.1; margin: 0 0 24px; letter-spacing: -0.03em; }
     h3 { font-size: 1.1rem; margin: 0 0 6px; }
     p { margin: 0 0 14px; }
     .dim { color: var(--dim); }
     .small { font-size: 0.9rem; }
 
+    /* The bar that stays at the top while the page scrolls: the name, the sections, and the download. */
+    .bar { position: sticky; top: 0; z-index: 5; height: 58px; background: rgba(11, 13, 28, 0.62); border-bottom: 1px solid rgba(255, 255, 255, 0.08); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+    .bar .wrap { height: 100%; display: flex; align-items: center; gap: 22px; }
+    .bar .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; text-decoration: none; margin-right: auto; white-space: nowrap; }
+    .bar .brand img { width: 30px; height: 30px; border-radius: 8px; }
+    .bar .links { display: flex; gap: 22px; }
+    .bar .links a { color: var(--dim); text-decoration: none; font-size: 0.95rem; }
+    .bar .links a:hover { color: var(--text); }
+    .bar .button { font-size: 0.95rem; padding: 8px 16px; border-radius: 10px; box-shadow: none; }
+
     /* The top of the page: the name, one sentence, the download button, a picture. */
     /* The galaxy behind the top of the page (the Milky Way, from NASA's Deep Star Maps 2020: images/galaxy.jpg), under a
        veil that deepens into the page's own colour, so the words above it stay readable and the page below is unchanged. */
     .hero {
-      padding: 64px 0 48px; text-align: center;
+      position: relative; margin-top: -58px; padding: 116px 0 48px; text-align: center;  /* (it starts under the bar, so the galaxy shows through it) */
       background:
         linear-gradient(180deg, rgba(11, 13, 28, 0.38) 0%, rgba(11, 13, 28, 0.62) 55%, var(--bg) 100%),
         #0b0d1c url("images/galaxy.jpg") center 42% / cover no-repeat;
     }
     .hero h1, .hero .tagline, .hero .under { text-shadow: 0 2px 14px rgba(4, 5, 14, 0.85); }  /* a soft shadow keeps the words clear of the bright band */
     .hero .tagline { color: #d8def2; }  /* (a little brighter than elsewhere: it sits on a picture) */
-    .hero .logo { width: 104px; height: 104px; margin: 0 auto 22px; border-radius: 24px; }
+    .hero .logo { width: 88px; height: 88px; margin: 0 auto 26px; border-radius: 21px; box-shadow: 0 10px 40px rgba(143, 194, 255, 0.25); }
+    .hero .wrap { position: relative; z-index: 1; }  /* the words and buttons are in front of the blocks */
+    /* The title in blocks. This box only keeps its room on the page (so nothing moves when the blocks appear): 102 blocks
+       across and 7 down on one line, or 59 across and 16 down on two for a narrow screen. The script reads --rows and the
+       box's height to find where each block belongs, and draws them on the canvas behind. */
+    #blocks { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; }  /* (clicks go through it to the page) */
+    .title-blocks, .hint { display: none; }
+    .blocks .title-blocks { display: block; --cols: 102; --rows: 7; --cell: min(calc((min(100vw, 1040px) - 44px) / var(--cols)), 11px); height: calc(var(--cell) * var(--rows)); margin: 0 auto 26px; }
+    .blocks .hero h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }  /* still there for a screen reader and a search engine */
+    .blocks .hint { display: block; margin: 12px 0 0; }
     .hero .tagline { font-size: clamp(1.05rem, 2.4vw, 1.3rem); color: var(--dim); max-width: 640px; margin: 0 auto 30px; }
     .button {
       display: inline-block; background: var(--orange); color: var(--orange-ink); font-weight: 700; font-size: 1.15rem;
@@ -69,42 +95,79 @@
     .button.quiet { background: rgba(11, 13, 28, 0.55); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.28); box-shadow: none; font-size: 1rem; padding: 11px 20px; backdrop-filter: blur(6px); }
     .buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
     .under { margin-top: 16px; }
-    .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+    .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 90px rgba(143, 194, 255, 0.10); }
     .hero .shot { margin-top: 44px; }
     .shot.radar { max-width: min(460px, 100%); margin: 26px auto 0; }  /* the radar picture: smaller, centred, and never wider than the screen (460px alone pushed a phone's page sideways) */
 
     /* What you can do: a picture and a few words each. */
     .features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
-    .feature { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    /* Each card leans towards the pointer and catches a light where it is (--tilt-x, --tilt-y, --light-x and --light-y
+       are set by the script at the bottom of the page; without it the cards simply stay flat). */
+    .feature {
+      position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+      transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); transition: transform 0.18s ease-out, border-color 0.18s;
+    }
+    .feature:hover { border-color: #4a5390; }
+    .feature::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.2s;
+      background: radial-gradient(420px circle at var(--light-x, 50%) var(--light-y, 50%), rgba(143, 194, 255, 0.16), transparent 60%);
+    }
+    .feature:hover::after { opacity: 1; }
     .feature img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
     .feature div { padding: 18px 20px 20px; }
     .feature p { margin: 0; color: var(--dim); }
 
+    /* The ready-made machines: eight small boxes, four to a row; under them, three boxes on how machines behave. */
+    .lead { font-size: 1.1rem; max-width: 640px; margin-bottom: 26px; }
+    .machines { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px; }
+    .machines .box { padding: 16px 18px; }
+    .machines .box p { margin: 0; }
+    .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .three .box p { margin: 0; }
+
     /* The first-start steps: one box for each system, side by side. */
     .two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
     .box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
-    .box.mine { border-color: var(--orange); }  /* the visitor's own system is outlined */
+    .box.mine { border-color: var(--orange); box-shadow: 0 0 44px rgba(255, 179, 71, 0.10); }  /* the visitor's own system is outlined */
     .box ol, .box ul { margin: 0 0 14px; padding-left: 22px; }
     .box li { margin-bottom: 8px; }
     .note { background: rgba(143, 194, 255, 0.08); border-left: 3px solid var(--blue); padding: 12px 16px; border-radius: 6px; margin: 0 0 26px; }
     code { background: #0a0c18; padding: 2px 6px; border-radius: 5px; font-size: 0.9em; overflow-wrap: anywhere; }
+    .again { text-align: center; }  /* the download once more, at the end of the page */
+    .again h2 { margin-bottom: 10px; }
+    .again p { margin-bottom: 26px; }
     footer { padding: 36px 0 60px; border-top: 1px solid var(--line); color: var(--dim); font-size: 0.9rem; }
 
     /* A narrow screen: one column. */
     @media (max-width: 760px) {
-      .features, .two { grid-template-columns: 1fr; }
+      .features, .two, .three { grid-template-columns: 1fr; }
+      .machines { grid-template-columns: repeat(2, 1fr); }
       section { padding: 42px 0; }
-      .hero { padding-top: 44px; }
+      .hero { padding-top: 96px; }
+      .bar .links { display: none; }  /* (no room for them: the name and the download stay) */
+      .blocks .title-blocks { --cols: 59; --rows: 16; }  /* the title on two lines */
     }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .feature { transition: none; } }
   </style>
 </head>
-<body>
+<body id="top">
+
+<nav class="bar" aria-label="Page">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="images/icon.png" width="30" height="30" alt="">Physics Playground</a>
+    <span class="links"><a href="#can-do">What you can do</a><a href="#machines">Machines</a><a href="#first-start">First start</a><a href="#together">Playing together</a></span>
+    <!-- The same download as the main button below (the script at the bottom of the page keeps them the same). -->
+    <a class="button same-download" href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg">Download</a>
+  </div>
+</nav>
 
 <header class="hero">
+  <canvas id="blocks" aria-hidden="true"></canvas>  <!-- the title's blocks are drawn here, behind the words -->
   <div class="wrap">
-    <img class="logo" src="images/icon.png" width="104" height="104" alt="">
+    <img class="logo" src="images/icon.png" width="88" height="88" alt="">
     <h1>Physics Playground</h1>
-    <p class="tagline">A free physics sandbox. Build with blocks, gears and machines, drive, fly a jetpack, dig and blow things up, alone or with up to six players.</p>
+    <div class="title-blocks" id="title-blocks" aria-hidden="true"></div>  <!-- (keeps the room the blocks are drawn in) -->
+    <p class="tagline">A free physics sandbox. Build machines that drive, fly, float and walk, dig and blow things up, alone or with up to six players.</p>
 
     <div class="buttons">
       <!-- The main button: for the visitor's own system (the script at the bottom of the page sets it). Until then, the Mac one. -->
@@ -117,13 +180,14 @@
     </div>
     <p class="under dim small"><span id="version">Free.</span> No account, no ads. <a href="#first-start">How to start it the first time</a></p>
     <p class="dim small" id="system-note" hidden></p>
+    <p class="hint dim small">The title is made of blocks. Move over it, then click or tap it.</p>
 
     <img class="shot" src="images/sandbox.jpg" width="1280" height="800" alt="The sandbox: a character standing by a campfire in a forest made of blocks.">
   </div>
 </header>
 
 <main>
-<section>
+<section id="can-do">
   <div class="wrap">
     <h2>What you can do</h2>
     <div class="features">
@@ -133,7 +197,7 @@
       </div>
       <div class="feature">
         <img src="images/machines.jpg" width="1280" height="800" loading="lazy" alt="A step-by-step scene showing a motor turning a gear.">
-        <div><h3>Build machines</h3><p>Gears, shafts, engines, pneumatic cylinders and more, with short scenes that show how each part works. Free gears go anywhere: hinge them to anything, mesh them by placing them, key them to axles, add motors, and hear teeth snap when a train is driven too hard.</p></div>
+        <div><h3>Build machines</h3><p>Start with a core block and add to it: 36 parts, from wheels, wings and jet engines to hulls, pistons, gears and a steam engine. Mirror mode builds both sides at once, and every part has a short scene that shows how it works. Gears mesh where you place them, and their teeth snap when a train is driven too hard.</p></div>
       </div>
       <div class="feature">
         <img src="images/driving.jpg" width="1280" height="800" loading="lazy" alt="A red hatchback driving across green hills.">
@@ -141,11 +205,11 @@
       </div>
       <div class="feature">
         <img src="images/fly.jpg" width="1280" height="800" loading="lazy" alt="A robot flying a jetpack over a river canyon and a pine forest.">
-        <div><h3>Fly</h3><p>Three quick jumps put on a jetpack. Hold Jump to climb and steer, let go to glide on the wind. It refuels on the ground.</p></div>
+        <div><h3>Fly</h3><p>Three quick jumps put on a jetpack. Hold Jump to climb and steer, let go to glide on the wind. It refuels on the ground. Or build a plane: its wings lift until they stall, as real ones do.</p></div>
       </div>
       <div class="feature">
         <img src="images/blast.jpg" width="1280" height="800" loading="lazy" alt="An explosion lighting up the trees beside a robot in a voxel forest.">
-        <div><h3>Dig and blast</h3><p>The world is made of blocks: dig tunnels, blast craters, bring down trees, towers and ruins. What breaks shatters into pieces you can pick up, and what is lighter than water floats.</p></div>
+        <div><h3>Dig and blast</h3><p>The world is made of blocks: dig tunnels, blast craters, bring down trees, towers and ruins. What breaks shatters into pieces you can pick up, and what is lighter than water floats. Blocks go on anything, too: build on a crate, a car or a machine and it carries them.</p></div>
       </div>
       <div class="feature">
         <img src="images/black-hole.jpg" width="1280" height="800" loading="lazy" alt="A black hole bending the light of the grid behind it.">
@@ -153,6 +217,38 @@
       </div>
     </div>
     <p class="under dim">In the sandbox you can also dig and shape the ground, place and break blocks, glue things together, set fires, blow things up, and drop your own 3D models (.glb files) onto the window: pick one up and it becomes an item you can hold, swing, put down or drop.</p>
+  </div>
+</section>
+
+<section id="machines">
+  <div class="wrap">
+    <h2>Eight machines, ready to go</h2>
+    <p class="lead dim">No building needed. Pick one in the inventory's <b>Vehicles</b> tab and place it: it lands where you aim, with you in the seat.</p>
+    <!-- The eight, in the game's own words for them (kPrebuilt in src/playground/scenes/rigid_build.inl). -->
+    <div class="machines">
+      <div class="box"><h3>Rally buggy</h3><p class="dim small">A light buggy on sprung back wheels.</p></div>
+      <div class="box"><h3>6x6 truck</h3><p class="dim small">Six driven wheels, a steered front axle and a bed.</p></div>
+      <div class="box"><h3>Jet plane</h3><p class="dim small">Two jets. Hold the throttle: it takes off and climbs.</p></div>
+      <div class="box"><h3>Prop plane</h3><p class="dim small">A propeller under the nose. It takes off and climbs the same way.</p></div>
+      <div class="box"><h3>Light tank</h3><p class="dim small">Turns on the spot on its tracks. Its turret fires shells.</p></div>
+      <div class="box"><h3>Heavy tank</h3><p class="dim small">A wide hull on tracks and a turret with two cannons.</p></div>
+      <div class="box"><h3>Strider</h3><p class="dim small">Four cranks walk two feet a side.</p></div>
+      <div class="box"><h3>Hexapod</h3><p class="dim small">Six spinning legs in a tripod gait.</p></div>
+    </div>
+    <div class="three">
+      <div class="box">
+        <h3>They float and fly for real</h3>
+        <p class="dim">Water holds up each part by what it displaces, so a hull floats and a mast adds nothing. Wings lift until they stall at 15 degrees. A steam engine takes five seconds to build its pressure.</p>
+      </div>
+      <div class="box">
+        <h3>They break</h3>
+        <p class="dim">A hard hit knocks parts off, and when the core block goes, everything that hung on it comes apart. Bombs, cannons and a flamethrower are among the parts.</p>
+      </div>
+      <div class="box">
+        <h3>They get back up</h3>
+        <p class="dim">A machine left lying on its side or roof for three seconds stands itself upright again. A wreck that has lost its core stays a wreck.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -196,7 +292,7 @@
         <p class="dim small">Joining a game: the iPhone finds hosts by their address (shown on the host's Host tab).</p>
       </div>
     </div>
-    <p class="under dim">In the game, choose <b>Choose scale</b>, then <b>Classical: rigid-body sandbox</b>. A short tutorial starts the first time. <b>F1</b> shows the controls, <b>Esc</b> opens the menu.</p>
+    <p class="under dim">In the game, choose <b>Play</b>. A short tutorial starts the first time, and there are more for gears, pneumatics, building machines, mechanisms, boats and planes, and siege. <b>F1</b> shows the controls, <b>Esc</b> opens the menu. The smaller physics scenes are under <b>All scenes: choose a scale</b>.</p>
   </div>
 </section>
 
@@ -246,6 +342,14 @@
     </div>
   </div>
 </section>
+
+<section class="again">
+  <div class="wrap">
+    <h2>Go and break something.</h2>
+    <p class="dim">Free. No account, no ads.</p>
+    <a class="button same-download with-label" href="https://github.com/RONIN-OP06/physics-playground/releases/latest/download/PhysicsPlayground-mac.dmg">Download for Mac</a>
+  </div>
+</section>
 </main>
 
 <footer>
@@ -288,6 +392,11 @@
     } else {  // something else (Linux, a Chromebook)
       say("The game is for Mac, Windows and Android. There is no Linux version yet.");
     }
+    // The bar's button and the one at the end of the page are the main button again: the same file, and (at the end) the same words.
+    [].forEach.call(document.querySelectorAll(".same-download"), function (again) {
+      again.href = main.href;  // the same installer
+      if (again.classList.contains("with-label")) again.textContent = document.getElementById("main-label").textContent;  // the same words
+    });
     // The newest version's number and the size of the visitor's download, asked of GitHub. If that
     // fails (no network, too many requests) the page simply says "Free." as it did.
     if (!window.fetch) return;  // (a very old browser)
@@ -302,6 +411,265 @@
         document.getElementById("version").textContent = "Version " + release.tag_name.replace(/^v/, "") + size + ". Free.";  // onto the page
       })
       .catch(function () {});  // (stay as it was)
+  })();
+</script>
+
+<script>
+  // The title, built from blocks, the way the sandbox's world is: move the pointer over it and it gives way; click or tap
+  // and it is blasted apart, the pieces fall and bounce on the picture below, and then they fly home and it is whole again.
+  //
+  // It is a small physics engine of the game's own kind. Every block has a place, a speed, a turn and a spin, and is
+  // moved 120 times a second by the forces on it (first the speed from the force, then the place from the speed, which
+  // is the order that keeps a spring from gaining energy). A block that is "held" is pulled to its place in the title by
+  // a damped spring; a blasted block is let go, so only gravity acts on it, until its hold comes back.
+  // It is drawn in plain 2D: each block's corners are turned, moved, and then pushed towards a vanishing point by how
+  // far back they are, which is all perspective is. Nothing is drawn while nothing moves.
+  (function () {
+    var root = document.documentElement;  // (the head's script put "blocks" on it if the title is to be built)
+    if (root.className !== "blocks") return;  // plain text title: nothing to do
+    var hero = document.querySelector(".hero"), room = document.getElementById("title-blocks"), shot = document.querySelector(".hero .shot");  // the top of the page, the room kept for the title, the picture
+    var canvas = document.getElementById("blocks"), ctx = canvas.getContext("2d");  // where the blocks are drawn
+    if (!ctx) { root.className = ""; return; }  // no drawing after all: back to the plain title
+
+    // The letters, 7 rows each, 1 where there is a block.
+    var LETTERS = {
+      P: "11110 10001 10001 11110 10000 10000 10000", H: "10001 10001 10001 11111 10001 10001 10001",
+      Y: "10001 10001 01010 00100 00100 00100 00100", S: "01111 10000 10000 01110 00001 00001 11110",
+      I: "111 010 010 010 010 010 111",               C: "01110 10001 10000 10000 10000 10001 01110",
+      L: "10000 10000 10000 10000 10000 10000 11111", A: "01110 10001 10001 11111 10001 10001 10001",
+      G: "01110 10001 10000 10111 10001 10001 01110", R: "11110 10001 10001 11110 10100 10010 10001",
+      O: "01110 10001 10001 10001 10001 10001 01110", U: "10001 10001 10001 10001 10001 10001 01110",
+      N: "10001 11001 10101 10011 10001 10001 10001", D: "11110 10001 10001 10001 10001 10001 11110"
+    };
+    var WORDS = ["PHYSICS", "PLAYGROUND"];  // side by side on a wide screen, one above the other on a narrow one
+    var COLOURS = [[143, 194, 255], [232, 235, 247]];  // the first word in the orbits' blue, the second in the page's white
+    var HOT = [255, 179, 71];  // a block just blasted glows the nucleus's orange, and cools
+    var STEP = 1 / 120;  // seconds between two moves of the blocks
+    var GRAVITY = 1900;  // how fast a let-go block gains speed downwards (pixels per second, each second)
+    var PULL = 120, DRAG = 16;  // the spring that holds a block in its place, and what stops it swinging there for ever
+    var DEPTH = 700;  // how far the viewer is from the page, in pixels: nearer makes the perspective stronger
+    var LIGHT = [-0.37, -0.56, 0.74];  // where the light comes from: up, a little to the left, and in front (y points down the page)
+    // The six sides of a block: which four corners (numbered by their x, y and z signs: 1, 2 and 4) and which way it faces.
+    var SIDES = [[[1, 3, 7, 5], [1, 0, 0]], [[0, 4, 6, 2], [-1, 0, 0]], [[2, 6, 7, 3], [0, 1, 0]], [[0, 1, 5, 4], [0, -1, 0]], [[4, 5, 7, 6], [0, 0, 1]], [[0, 2, 3, 1], [0, 0, -1]]];
+
+    // One block for every 1 in every letter. Where it belongs on the page is worked out in fit(), from the room kept for the title.
+    var blocks = [], starts = [], widths = [];  // the blocks; where each letter starts in its word (in blocks); how wide each word is
+    WORDS.forEach(function (word, w) {
+      var across = 0;  // how far along the word this letter starts
+      starts[w] = [];
+      word.split("").forEach(function (letter, n) {
+        var rows = LETTERS[letter].split(" ");  // the letter's seven rows
+        starts[w][n] = across;
+        rows.forEach(function (row, down) {
+          row.split("").forEach(function (bit, along) {
+            if (bit !== "1") return;  // no block here
+            blocks.push({
+              word: w, letter: n, along: along, down: down,  // which block of which letter
+              homeX: 0, homeY: 0,  // its place in the title (set by fit)
+              x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0,  // where it is and how fast it is going (z is towards the viewer)
+              qw: 1, qx: 0, qy: 0, qz: 0, sx: 0, sy: 0, sz: 0,  // how it is turned (a quaternion) and how fast it is spinning
+              hold: 1, back: 0, heat: 0, placed: false  // how firmly its place holds it (0 to 1), when the hold returns, how hot it is
+            });
+          });
+        });
+        across += rows[0].length + 1;  // the next letter starts one block further than this one ends
+      });
+      widths[w] = across - 1;  // (no gap after the last letter)
+    });
+
+    var cell = 10, wide = 0, tall = 0;  // the size of a block's room, and of the canvas, in page pixels
+    var floorY = 0, floorLeft = 0, floorRight = 0;  // the top edge of the picture, which the pieces land on
+    var eyeX = 0, eyeY = 0, restX = 0, restY = 0;  // the vanishing point (it follows the pointer), and where it rests
+    var pointer = { on: false, x: 0, y: 0 };  // the pointer, measured from the hero's corner
+    var flashes = [];  // the blasts still glowing
+    var frameId = 0, last = 0, owed = 0, still = 0;  // the drawing loop: its handle, the last frame's time, time not yet simulated, frames with nothing moving
+
+    // Work out where everything is: called at the start and whenever the page changes size.
+    function fit() {
+      var box = hero.getBoundingClientRect(), at = room.getBoundingClientRect(), pic = shot.getBoundingClientRect();
+      var rows = parseInt(getComputedStyle(room).getPropertyValue("--rows"), 10) || 7;  // 7: the words side by side; 16: one above the other
+      var oneLine = rows === 7, across = oneLine ? widths[0] + 4 + widths[1] : widths[1];  // how many blocks wide the title is
+      cell = at.height / rows;
+      var left = at.left - box.left + (at.width - across * cell) / 2, top = at.top - box.top;  // the title's corner, measured from the hero's
+      blocks.forEach(function (b) {
+        var col = starts[b.word][b.letter] + b.along, row = b.down;  // its column and row in its own word
+        if (oneLine) { if (b.word === 1) col += widths[0] + 4; }  // the second word follows the first, four blocks on
+        else if (b.word === 0) col += (widths[1] - widths[0]) / 2;  // two lines: the shorter word is centred over the longer
+        else row += 9;  // and the longer is nine rows down
+        b.homeX = left + (col + 0.5) * cell;
+        b.homeY = top + (row + 0.5) * cell;
+        if (!b.placed) {  // the first time: start scattered round the title, turned any way, and let the springs build it
+          var angle = Math.random() * 6.283, far = 260 + Math.random() * 640;
+          b.x = b.homeX + Math.cos(angle) * far; b.y = b.homeY + Math.sin(angle) * far * 0.6; b.z = (Math.random() - 0.6) * 900;
+          b.qw = Math.random() - 0.5; b.qx = Math.random() - 0.5; b.qy = Math.random() - 0.5; b.qz = Math.random() - 0.5;
+          b.placed = true;
+        }
+      });
+      floorY = pic.top - box.top; floorLeft = pic.left - box.left; floorRight = pic.right - box.left;
+      wide = box.width; tall = floorY + 140;  // the canvas ends a little below the picture's top: pieces that miss the picture fade out there
+      restX = wide / 2; restY = top + at.height / 2;  // the vanishing point rests behind the middle of the title
+      if (!eyeX) { eyeX = restX; eyeY = restY; }
+      var sharp = Math.min(window.devicePixelRatio || 1, 2);  // a sharp screen gets a canvas with more dots (twice at most)
+      canvas.width = Math.round(wide * sharp); canvas.height = Math.round(tall * sharp);
+      canvas.style.height = tall + "px";
+      ctx.setTransform(sharp, 0, 0, sharp, 0, 0);  // so everything below can be written in page pixels
+      wake();
+    }
+
+    // Move every block on by one step. Says whether anything is still moving.
+    function step(now) {
+      var moving = false, reach = cell * 5 + 30;  // how far the pointer's push reaches
+      for (var i = 0; i < blocks.length; i++) {
+        var b = blocks[i];
+        if (b.hold < 1 && now > b.back) b.hold = Math.min(1, b.hold + STEP / 0.9);  // its place takes hold of it again, over most of a second
+        // The forces on it: the spring to its place (as strong as the hold), and gravity (as strong as the hold is weak).
+        var fx = b.hold * (PULL * (b.homeX - b.x) - DRAG * b.vx);
+        var fy = b.hold * (PULL * (b.homeY - b.y) - DRAG * b.vy) + (1 - b.hold) * GRAVITY;
+        var fz = b.hold * (PULL * (0 - b.z) - DRAG * b.vz);
+        if (pointer.on && b.hold > 0.5) {  // the pointer pushes held blocks away from it, and out towards the viewer
+          var dx = b.x - pointer.x, dy = b.y - pointer.y, d = Math.sqrt(dx * dx + dy * dy);
+          if (d < reach) {
+            var push = (1 - d / reach) * (1 - d / reach) * 3000;  // strongest right under the pointer, nothing at the edge of its reach
+            fx += dx / (d || 1) * push; fy += dy / (d || 1) * push; fz += push * 0.7;
+          }
+        }
+        b.vx += fx * STEP; b.vy += fy * STEP; b.vz += fz * STEP;  // the speed from the force
+        b.x += b.vx * STEP; b.y += b.vy * STEP; b.z += b.vz * STEP;  // then the place from the speed
+        if (b.z > 380) { b.z = 380; b.vz *= -0.3; }  // (never right up against the viewer's eye)
+        if (b.y > tall + 200) { b.y = tall + 200; b.vy = 0; }  // (a piece that missed the picture waits just out of sight, not a mile below)
+        // A falling piece lands on the top edge of the picture and bounces, losing some of its speed and spin each time.
+        if (b.hold < 0.5 && b.vy > 0 && b.x > floorLeft && b.x < floorRight && b.y > floorY - cell / 2 && b.y < floorY + 40) {
+          b.y = floorY - cell / 2;
+          b.vy = b.vy > 90 ? -0.42 * b.vy : 0; b.vx *= 0.8; b.vz *= 0.8;
+          b.sx *= 0.6; b.sy *= 0.6; b.sz *= 0.6;
+        }
+        // Its turn from its spin. A held block also loses its spin and is turned back upright.
+        if (b.hold > 0) {
+          var calm = 1 - Math.min(1, b.hold * STEP * 6);
+          b.sx *= calm; b.sy *= calm; b.sz *= calm;
+          if (b.qw < 0) { b.qw = -b.qw; b.qx = -b.qx; b.qy = -b.qy; b.qz = -b.qz; }  // (the same turn, written the short way round)
+          var up = b.hold * STEP * 5;
+          b.qw += (1 - b.qw) * up; b.qx -= b.qx * up; b.qy -= b.qy * up; b.qz -= b.qz * up;
+        }
+        var h = STEP / 2, qw = b.qw, qx = b.qx, qy = b.qy, qz = b.qz;
+        b.qw -= h * (b.sx * qx + b.sy * qy + b.sz * qz);
+        b.qx += h * (b.sx * qw + b.sy * qz - b.sz * qy);
+        b.qy += h * (b.sy * qw + b.sz * qx - b.sx * qz);
+        b.qz += h * (b.sz * qw + b.sx * qy - b.sy * qx);
+        var length = Math.sqrt(b.qw * b.qw + b.qx * b.qx + b.qy * b.qy + b.qz * b.qz) || 1;  // (kept at length 1, or the block would stretch)
+        b.qw /= length; b.qx /= length; b.qy /= length; b.qz /= length;
+        b.heat *= 1 - STEP * 0.8;  // it cools
+        if (b.hold < 1 || b.heat > 0.02 || b.vx * b.vx + b.vy * b.vy + b.vz * b.vz > 4 || b.qw < 0.9999 ||
+            Math.abs(b.x - b.homeX) + Math.abs(b.y - b.homeY) + Math.abs(b.z) > 0.6) moving = true;
+      }
+      return moving;
+    }
+
+    // Blast the blocks near a point: each is thrown outwards (and a little up, and towards or away from the viewer),
+    // set spinning, heated, and let go for two or three seconds.
+    function blast(x, y) {
+      var reach = Math.max(90, cell * 14), now = performance.now() / 1000;
+      blocks.forEach(function (b) {
+        var dx = b.x - x, dy = b.y - y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d > reach) return;  // too far away to feel it
+        var speed = (1 - d / reach) * 460 + 130, way = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.9;  // faster nearer the blast, and not all in quite the same direction
+        b.vx += Math.cos(way) * speed; b.vy += Math.sin(way) * speed - 260; b.vz += (Math.random() - 0.3) * 500;
+        b.sx = (Math.random() - 0.5) * 24; b.sy = (Math.random() - 0.5) * 24; b.sz = (Math.random() - 0.5) * 24;
+        b.hold = 0; b.back = now + 1.9 + Math.random() * 1.4; b.heat = 1;
+      });
+      flashes.push({ x: x, y: y, born: now });
+      wake();
+    }
+
+    // Draw everything as it is now.
+    function draw(now) {
+      ctx.clearRect(0, 0, wide, tall);
+      flashes = flashes.filter(function (f) { return now - f.born < 0.4; });  // a flash lasts four tenths of a second
+      flashes.forEach(function (f) {  // a ring of light spreading from each blast
+        var age = (now - f.born) / 0.4, radius = 30 + age * 420, glow = ctx.createRadialGradient(f.x, f.y, radius * 0.4, f.x, f.y, radius);
+        glow.addColorStop(0, "rgba(255, 179, 71, 0)");
+        glow.addColorStop(0.75, "rgba(255, 200, 120, " + (0.45 * (1 - age)).toFixed(3) + ")");
+        glow.addColorStop(1, "rgba(255, 179, 71, 0)");
+        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(f.x, f.y, radius, 0, 6.283); ctx.fill();
+      });
+      blocks.sort(function (a, b) { return a.z - b.z; });  // the furthest first, so nearer blocks are drawn over them
+      var half = cell * 0.45, corners = [];  // (a little under half the room: a gap shows between blocks)
+      for (var i = 0; i < blocks.length; i++) {
+        var b = blocks[i];
+        if (DEPTH - b.z < 60 || b.y > tall + cell * 3) continue;  // (out of sight)
+        // How it is turned, as three rows of numbers (a rotation matrix), from the quaternion.
+        var xx = b.qx * b.qx, yy = b.qy * b.qy, zz = b.qz * b.qz, xy = b.qx * b.qy, xz = b.qx * b.qz, yz = b.qy * b.qz, wx = b.qw * b.qx, wy = b.qw * b.qy, wz = b.qw * b.qz;
+        var m = [1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy), 2 * (xy + wz), 1 - 2 * (xx + zz), 2 * (yz - wx), 2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy)];
+        for (var c = 0; c < 8; c++) {  // its eight corners: turned, moved to where the block is, then drawn towards the vanishing point by their distance
+          var lx = c & 1 ? half : -half, ly = c & 2 ? half : -half, lz = c & 4 ? half : -half;
+          var px = b.x + m[0] * lx + m[1] * ly + m[2] * lz, py = b.y + m[3] * lx + m[4] * ly + m[5] * lz, pz = b.z + m[6] * lx + m[7] * ly + m[8] * lz;
+          var near = DEPTH / (DEPTH - pz);  // 1 on the page itself, bigger for what is nearer
+          corners[c] = [eyeX + (px - eyeX) * near, eyeY + (py - eyeY) * near];
+        }
+        ctx.globalAlpha = Math.max(0, Math.min(1, (tall - b.y) / 120));  // fades out near the canvas's bottom edge
+        var base = COLOURS[b.word], heat = Math.min(1, b.heat);
+        for (var s = 0; s < 6; s++) {
+          var n = SIDES[s][1], nx = m[0] * n[0] + m[1] * n[1] + m[2] * n[2], ny = m[3] * n[0] + m[4] * n[1] + m[5] * n[2], nz = m[6] * n[0] + m[7] * n[1] + m[8] * n[2];  // which way this side faces, turned with the block
+          if (nx * (eyeX - b.x - nx * half) + ny * (eyeY - b.y - ny * half) + nz * (DEPTH - b.z - nz * half) <= 0) continue;  // it faces away from the viewer: not seen
+          var lit = 0.5 + 0.5 * Math.max(0, nx * LIGHT[0] + ny * LIGHT[1] + nz * LIGHT[2]);  // brighter the more it faces the light
+          var colour = "rgb(" + Math.round((base[0] + (HOT[0] - base[0]) * heat) * lit) + "," + Math.round((base[1] + (HOT[1] - base[1]) * heat) * lit) + "," + Math.round((base[2] + (HOT[2] - base[2]) * heat) * lit) + ")";
+          var q = SIDES[s][0];
+          ctx.beginPath();
+          ctx.moveTo(corners[q[0]][0], corners[q[0]][1]); ctx.lineTo(corners[q[1]][0], corners[q[1]][1]); ctx.lineTo(corners[q[2]][0], corners[q[2]][1]); ctx.lineTo(corners[q[3]][0], corners[q[3]][1]);
+          ctx.closePath();
+          ctx.fillStyle = colour; ctx.strokeStyle = colour; ctx.lineWidth = 0.6;  // (the thin outline in the same colour closes the hairline between two sides)
+          ctx.fill(); ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // One frame: simulate the time that has passed in steps, draw, and ask for the next frame unless everything has come to rest.
+    function frame(ms) {
+      var now = ms / 1000, moving = false;
+      owed += Math.min(now - last, 0.05); last = now;  // (after a pause, such as another tab, only a twentieth of a second is made up)
+      while (owed >= STEP) { moving = step(now); owed -= STEP; }
+      var toX = pointer.on ? restX + (pointer.x - restX) * 0.6 : restX, toY = pointer.on ? restY + (pointer.y - restY) * 0.6 : restY;  // the vanishing point leans towards the pointer
+      eyeX += (toX - eyeX) * 0.1; eyeY += (toY - eyeY) * 0.1;
+      draw(now);
+      still = moving || flashes.length || Math.abs(toX - eyeX) + Math.abs(toY - eyeY) > 0.5 ? 0 : still + 1;
+      frameId = still < 30 ? requestAnimationFrame(frame) : 0;  // half a second of nothing moving: stop, until wake()
+    }
+    function wake() {  // start drawing again (if it had stopped)
+      still = 0;
+      if (!frameId) { last = performance.now() / 1000; owed = STEP; frameId = requestAnimationFrame(frame); }
+    }
+
+    function where(event) {  // the pointer's place, measured from the hero's corner
+      var box = hero.getBoundingClientRect();
+      pointer.x = event.clientX - box.left; pointer.y = event.clientY - box.top;
+    }
+    hero.addEventListener("pointermove", function (event) { where(event); pointer.on = event.pointerType !== "touch"; wake(); });  // (a finger blasts; it does not hover)
+    hero.addEventListener("pointerleave", function () { pointer.on = false; wake(); });
+    hero.addEventListener("pointerdown", function (event) {
+      if (event.target.closest("a, button")) return;  // a click on a button is for the button
+      where(event); blast(pointer.x, pointer.y);
+    });
+    window.addEventListener("resize", fit);
+    window.addEventListener("load", fit);  // (the picture's place is final once everything has loaded)
+    fit();
+  })();
+
+  // The "What you can do" cards lean towards the pointer and catch a light where it is. Only with a mouse, and not for a visitor who asked for less motion.
+  (function () {
+    if (!window.matchMedia || !matchMedia("(hover: hover)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    [].forEach.call(document.querySelectorAll(".feature"), function (card) {
+      card.addEventListener("pointermove", function (event) {
+        var box = card.getBoundingClientRect(), x = (event.clientX - box.left) / box.width, y = (event.clientY - box.top) / box.height;  // where the pointer is on the card, 0 to 1 each way
+        card.style.setProperty("--tilt-x", ((0.5 - y) * 6).toFixed(2) + "deg");  // leans back when the pointer is at the top
+        card.style.setProperty("--tilt-y", ((x - 0.5) * 8).toFixed(2) + "deg");  // and to the side it is on
+        card.style.setProperty("--light-x", (x * 100).toFixed(1) + "%");
+        card.style.setProperty("--light-y", (y * 100).toFixed(1) + "%");
+      });
+      card.addEventListener("pointerleave", function () {  // flat again
+        card.style.setProperty("--tilt-x", "0deg"); card.style.setProperty("--tilt-y", "0deg");
+      });
+    });
   })();
 </script>
 </body>
